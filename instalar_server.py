@@ -2,16 +2,21 @@ import os
 import subprocess
 import getpass
 
+
+
 def run_command(command, sudo=False):
-    """Ejecuta un comando en el sistema."""
+    """Ejecuta un comando en el sistema y muestra la salida en tiempo real."""
     if sudo:
         command = f"sudo {command}"
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+
+    for line in process.stdout:
+        print(line, end='')
+
+    process.wait()
     if process.returncode != 0:
-        print(f"Error al ejecutar {command}: {stderr.decode()}")
-    else:
-        print(f"Salida: {stdout.decode()}")
+        print(f"\nError al ejecutar {command} (código {process.returncode})")
+
 
 def install_nginx():
     """Instala Nginx en Ubuntu."""
