@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reportejrxml" pageWidth="1000" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="10" bottomMargin="10" uuid="29c7e188-859c-49e4-8732-3284e4294b59">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="491"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="495"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="260"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="732"/>
+	<parameter name="par_cedula" class="java.lang.Integer"/>
+	<parameter name="report_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA["/home/hugo/JaspersoftWorkspace/WendyProyecto"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT * 
+FROM sueldo_inicial
+where cedula_id = $P{par_cedula}]]>
+	</queryString>
+	<field name="cedula_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="cedula_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="cedula_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="CNIVEL" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="CNIVEL"/>
+		<property name="com.jaspersoft.studio.field.label" value="CNIVEL"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="CINSTI" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="CINSTI"/>
+		<property name="com.jaspersoft.studio.field.label" value="CINSTI"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="CDPTO" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="CDPTO"/>
+		<property name="com.jaspersoft.studio.field.label" value="CDPTO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="CCORRES" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="CCORRES"/>
+		<property name="com.jaspersoft.studio.field.label" value="CCORRES"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="DIGITO_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DIGITO_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="DIGITO_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="APEL_NOMB" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="APEL_NOMB"/>
+		<property name="com.jaspersoft.studio.field.label" value="APEL_NOMB"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="CCARGO" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="CCARGO"/>
+		<property name="com.jaspersoft.studio.field.label" value="CCARGO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="TURNO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TURNO"/>
+		<property name="com.jaspersoft.studio.field.label" value="TURNO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="TIPO_RUBRO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TIPO_RUBRO"/>
+		<property name="com.jaspersoft.studio.field.label" value="TIPO_RUBRO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="CATEGO_PSP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CATEGO_PSP"/>
+		<property name="com.jaspersoft.studio.field.label" value="CATEGO_PSP"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="CANT_RUBRO" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="CANT_RUBRO"/>
+		<property name="com.jaspersoft.studio.field.label" value="CANT_RUBRO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="PRESUP_ACT" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="PRESUP_ACT"/>
+		<property name="com.jaspersoft.studio.field.label" value="PRESUP_ACT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="DEVENG_ACT" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="DEVENG_ACT"/>
+		<property name="com.jaspersoft.studio.field.label" value="DEVENG_ACT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="DCTO_JUB" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="DCTO_JUB"/>
+		<property name="com.jaspersoft.studio.field.label" value="DCTO_JUB"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="CAPOR_IPS" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="CAPOR_IPS"/>
+		<property name="com.jaspersoft.studio.field.label" value="CAPOR_IPS"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="STATUS_CRG" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="STATUS_CRG"/>
+		<property name="com.jaspersoft.studio.field.label" value="STATUS_CRG"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="AA_PLAN" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="AA_PLAN"/>
+		<property name="com.jaspersoft.studio.field.label" value="AA_PLAN"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="MM_PLAN" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="MM_PLAN"/>
+		<property name="com.jaspersoft.studio.field.label" value="MM_PLAN"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="capor_bnt" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="capor_bnt"/>
+		<property name="com.jaspersoft.studio.field.label" value="capor_bnt"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="id_presup" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="id_presup"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_presup"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="orden" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="orden"/>
+		<property name="com.jaspersoft.studio.field.label" value="orden"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="visible" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="visible"/>
+		<property name="com.jaspersoft.studio.field.label" value="visible"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="linea" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="linea"/>
+		<property name="com.jaspersoft.studio.field.label" value="linea"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="aa_pago" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="aa_pago"/>
+		<property name="com.jaspersoft.studio.field.label" value="aa_pago"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="mm_pago" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="mm_pago"/>
+		<property name="com.jaspersoft.studio.field.label" value="mm_pago"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<field name="dto_3506" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="dto_3506"/>
+		<property name="com.jaspersoft.studio.field.label" value="dto_3506"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sueldo_inicial"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="1" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="93" splitType="Stretch">
+			<staticText>
+				<reportElement x="17" y="13" width="923" height="16" uuid="86a34999-4ff7-4e67-8d0b-86635399ca8d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4d4e1d1c-ea85-44a4-8017-54f52282aac8"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[EXTRACTO DE SUELDO Y BENEFICIOS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="" x="892" y="29" width="12" height="10" uuid="f0317578-db75-49ff-a0d0-46608355e6a4"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="" x="860" y="29" width="30" height="10" forecolor="#000000" uuid="3b55871c-8bf5-4f9e-995d-01d9c81d4525"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Pagina:]]></text>
+			</staticText>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement key="" x="906" y="29" width="50" height="10" uuid="a315b51e-db90-4423-b379-a4cdfb21938f"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["/" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" hAlign="Left" vAlign="Middle" isUsingCache="false">
+				<reportElement key="image1" isPrintRepeatedValues="false" x="7" y="3" width="253" height="47" uuid="78578986-a839-412d-94db-e081b3fad032"/>
+				<imageExpression><![CDATA[$P{report_path}+ "/imagen/logomec.jpeg"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="55" splitType="Stretch">
+			<rectangle>
+				<reportElement x="6" y="0" width="943" height="27" uuid="a015d2d1-7220-4f9b-9b9a-e84d7554fb44"/>
+			</rectangle>
+			<textField>
+				<reportElement x="545" y="0" width="279" height="26" uuid="df198ee2-6c4e-4323-9cab-c5dc763dd12d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+    
+    <textFieldExpression><![CDATA[
+    ("MES : " + 
+    new String[]{"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+                 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"}[$F{MM_PLAN}.intValue() - 1] 
+    + " AÑO : " + $F{AA_PLAN}).toUpperCase()
+]]></textFieldExpression>
+    
+			</textField>
+			<textField>
+				<reportElement x="94" y="0" width="192" height="26" uuid="25598962-e8e3-46dc-8da9-990a40c80b77">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4d4e1d1c-ea85-44a4-8017-54f52282aac8"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{APEL_NOMB}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="24" y="0" width="56" height="26" uuid="68bd9691-7392-4dae-9850-dfc5ccafe4f4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5654d013-5779-44c3-ab03-ceb60ca4f0cd"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cedula_id}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="31" splitType="Stretch">
+			<textField>
+				<reportElement x="104" y="0" width="56" height="23" uuid="6ae2a3b0-89b9-4148-af67-07e9aa862135">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4d4e1d1c-ea85-44a4-8017-54f52282aac8"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CATEGO_PSP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="162" y="0" width="40" height="23" uuid="e8b5ba2c-e9db-48fb-a910-f8809324ca2d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4d4e1d1c-ea85-44a4-8017-54f52282aac8"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANT_RUBRO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="204" y="0" width="39" height="23" uuid="c0af1336-10bd-4996-abb6-57a6aa34b234">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4d4e1d1c-ea85-44a4-8017-54f52282aac8"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TURNO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="470" y="0" width="70" height="23" uuid="4bf8a474-286d-4406-8710-0200d82d3a3d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4d4e1d1c-ea85-44a4-8017-54f52282aac8"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRESUP_ACT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="540" y="0" width="70" height="23" uuid="12305caf-d0f4-4ca6-b02a-144d30a6a118">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4d4e1d1c-ea85-44a4-8017-54f52282aac8"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEVENG_ACT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="610" y="0" width="70" height="23" uuid="a10f9271-e054-45f3-affc-4f361278e5ca">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4d4e1d1c-ea85-44a4-8017-54f52282aac8"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DCTO_JUB}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="680" y="0" width="70" height="23" uuid="f8b86662-cc11-42ad-b86a-1413b038b778">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4d4e1d1c-ea85-44a4-8017-54f52282aac8"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPOR_IPS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="10" splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="262"/>
+	</lastPageFooter>
+	<summary>
+		<band height="28" splitType="Stretch"/>
+	</summary>
+</jasperReport>
