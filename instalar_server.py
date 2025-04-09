@@ -2,8 +2,6 @@ import os
 import subprocess
 import getpass
 
-
-
 def run_command(command, sudo=False):
     """Ejecuta un comando en el sistema y muestra la salida en tiempo real."""
     if sudo:
@@ -17,6 +15,24 @@ def run_command(command, sudo=False):
     if process.returncode != 0:
         print(f"\nError al ejecutar {command} (código {process.returncode})")
 
+def configure_swap(size_gb=4):
+    """Configura el swap en el sistema si no está configurado o si se desea cambiar el tamaño."""
+    print(f"Verificando y configurando swap de {size_gb}GB...")
+    # Verificar si ya existe un archivo de swap
+    result = subprocess.run("swapon --show", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result.stdout:
+        print("Swap ya está configurado.")
+    else:
+        # Crear un archivo de swap de 4GB
+        print("Creando archivo de swap...")
+        run_command(f"sudo fallocate -l {size_gb}G /swapfile", sudo=True)
+        run_command("sudo chmod 600 /swapfile", sudo=True)
+        run_command("sudo mkswap /swapfile", sudo=True)
+        run_command("sudo swapon /swapfile", sudo=True)
+        # Hacer permanente el swap editando fstab
+        with open("/etc/fstab", "a") as fstab:
+            fstab.write("\n/swapfile none swap sw 0 0\n")
+        print(f"Swap de {size_gb}GB configurado correctamente.")
 
 def install_nginx():
     """Instala Nginx en Ubuntu."""
@@ -50,6 +66,7 @@ def install_mysql():
 def main():
     """Función principal que coordina la instalación."""
     print("Iniciando la instalación del servidor...")
+    configure_swap(size_gb=4)  # Configura el swap de 4GB
     install_nginx()
     install_openjdk()
     install_mysql()
