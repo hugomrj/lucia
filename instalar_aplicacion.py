@@ -147,11 +147,8 @@ def main():
     print("🔧 Iniciando despliegue del proyecto Lucia...")
     
     # Definir usuario una sola vez de manera robusta
-    try:
-        deploy_user = os.environ.get('SUDO_USER') or os.getlogin()
-    except Exception:
-        deploy_user = 'ubuntu'  # Fallback seguro
-
+    deploy_user = os.environ.get('SUDO_USER') or os.getlogin() or 'ubuntu'
+    run(f"id -u {deploy_user}")  # Verifica que el usuario existe
 
 
     check_and_install_venv()
@@ -187,11 +184,12 @@ Description=Gunicorn instance to serve Lucia
 After=network.target
 
 [Service]
-User={deploy_user}  # Usamos la variable recién definida
+User={deploy_user}
 Group=www-data
 WorkingDirectory={PROJECT_PATH}
 Environment="PATH={PROJECT_PATH}/venv/bin"
 Environment="PYTHONPATH={PROJECT_PATH}"
+Environment="HOME=/home/{deploy_user}"  # Importante para permisos
 ExecStart={PROJECT_PATH}/venv/bin/gunicorn \
         --workers 1 \
         --timeout 300 \
@@ -241,27 +239,25 @@ WantedBy=multi-user.target
 
 
 
-    # 🔄 Añade esta sección JUSTO ANTES del if __name__ == '__main__':
     print("🔧 Configurando permisos finales...")
-    
-    # 1. Asegurar permisos del proyecto
-    run(f"sudo chown -R {os.getlogin()}:www-data {PROJECT_PATH}")
+
+    # Asegurar que el usuario y grupo existen
+    run(f"sudo groupadd -f www-data")
+    run(f"sudo usermod -a -G www-data {deploy_user}")
+
+    # Permisos del proyecto
+    run(f"sudo chown -R {deploy_user}:www-data {PROJECT_PATH}")
     run(f"sudo chmod -R 775 {PROJECT_PATH}")
-    
-    # 2. Crear directorio de logs
+
+    # Directorio de logs
     run(f"mkdir -p {PROJECT_PATH}/logs")
-    run(f"sudo chown {os.getlogin()}:www-data {PROJECT_PATH}/logs")
+    run(f"sudo chown {deploy_user}:www-data {PROJECT_PATH}/logs")
     run(f"sudo chmod 775 {PROJECT_PATH}/logs")
-    
-    # 3. Reiniciar servicios para aplicar cambios
-    print("🔄 Reiniciando servicios...")
-    run("sudo systemctl daemon-reload")
-    run("sudo systemctl restart lucia")
-    run("sudo systemctl restart nginx")
-    
-    # 4. Verificación final
-    print("\n🔍 Verificando estado del servicio...")
-    run("sudo systemctl status lucia --no-pager")
+
+    # Permisos especiales para el socket
+    run(f"sudo mkdir -p {PROJECT_PATH}")
+    run(f"sudo chown {deploy_user}:www-data {PROJECT_PATH}")
+    run(f"sudo chmod 775 {PROJECT_PATH}")
 
 
 
