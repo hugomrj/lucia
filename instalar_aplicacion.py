@@ -7,6 +7,7 @@ from pathlib import Path
 sudo SERVER_NAME="IP" python3 lucia/instalar_aplicacion.py
 '''
 
+
 # Ruta donde se instalará el proyecto
 PROJECT_PATH = Path("/srv/python/lucia")
 
@@ -34,10 +35,14 @@ def install_pip(venv_path):
     """Instalar pip en el entorno virtual si no está presente."""
     pip_path = venv_path / "bin" / "pip"
     if not pip_path.exists():
-        print("⚠️ pip no está presente en el entorno virtual. Instalando...")
+        print("⚠️ pip no está presente en el entorno virtual. Intentando instalar...")
         # Usar ensurepip para instalar pip
-        run(f"{venv_path}/bin/python -m ensurepip --upgrade")
-        run(f"{venv_path}/bin/pip install --upgrade pip")
+        try:
+            run(f"{venv_path}/bin/python -m ensurepip --upgrade")
+            print("✅ pip instalado usando ensurepip.")
+        except subprocess.CalledProcessError:
+            print("⚠️ Error al usar ensurepip. Intentando instalación manual de pip...")
+            run(f"{venv_path}/bin/python -m pip install --upgrade pip")  # Instalación manual
 
 def main():
     print("🔧 Iniciando despliegue del proyecto Lucia...")
