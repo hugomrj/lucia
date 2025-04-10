@@ -1,12 +1,12 @@
 import subprocess
 import os
+import sys
 from pathlib import Path
-
+import time
 
 '''
 sudo SERVER_NAME="IP" python3 lucia/instalar_aplicacion.py
 '''
-
 
 # Ruta donde se instalará el proyecto
 PROJECT_PATH = Path("/srv/python/lucia")
@@ -19,30 +19,72 @@ if not SERVER_NAME:
 def run(cmd, **kwargs):
     """Ejecuta un comando de shell y muestra lo que se está haciendo."""
     print(f"\n==> Ejecutando: {cmd}")
-    subprocess.run(cmd, shell=True, check=True, **kwargs)
+    try:
+        subprocess.run(cmd, shell=True, check=True, **kwargs)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error al ejecutar: {cmd}")
+        print(f"Error: {e}")
+        sys.exit(1)
 
 def check_and_install_venv():
     """Verifica si python3-venv está instalado, y si no lo está, lo instala."""
     try:
-        subprocess.run("python3 -m venv --help", shell=True, check=True)
+        subprocess.run("python3 -m venv --help", shell=True, check=True, 
+                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         print("✅ python3-venv ya está instalado.")
     except subprocess.CalledProcessError:
         print("⚠️ python3-venv no está instalado. Instalando...")
         run("sudo apt update")
-        run("sudo apt install -y python3.12-venv")
+        run("sudo apt install -y python3-venv")
+
+def create_virtualenv(venv_path):
+    """Crea un entorno virtual con reintentos si falla."""
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        print(f"Intentando crear entorno virtual (intento {attempt}/{max_attempts})...")
+        try:
+            run(f"python3 -m venv {venv_path}")
+            # Verificar que se crearon los archivos esenciales
+            if (venv_path / "bin" / "python").exists():
+                print("✅ Entorno virtual creado correctamente.")
+                return
+            else:
+                print("⚠️ El entorno virtual no se creó completamente.")
+                raise subprocess.CalledProcessError(1, "venv")
+        except subprocess.CalledProcessError:
+            if attempt < max_attempts:
+                print("⚠️ Falló la creación del entorno virtual. Reintentando...")
+                time.sleep(2)
+                # Eliminar el directorio si existe para un intento limpio
+                run(f"rm -rf {venv_path}")
+            else:
+                print("❌ No se pudo crear el entorno virtual después de varios intentos.")
+                sys.exit(1)
 
 def install_pip(venv_path):
-    """Instalar pip en el entorno virtual si no está presente."""
+    """Instalar pip en el entorno virtual con reintentos."""
     pip_path = venv_path / "bin" / "pip"
-    if not pip_path.exists():
-        print("⚠️ pip no está presente en el entorno virtual. Intentando instalar...")
-        # Usar ensurepip para instalar pip
+    python_path = venv_path / "bin" / "python
+    
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
         try:
-            run(f"{venv_path}/bin/python -m ensurepip --upgrade")
-            print("✅ pip instalado usando ensurepip.")
+            if not pip_path.exists():
+                print(f"Instalando pip (intento {attempt}/{max_attempts})...")
+                run(f"{python_path} -m ensurepip --upgrade")
+                run(f"{python_path} -m pip install --upgrade pip")
+            
+            # Verificar que pip funciona
+            run(f"{pip_path} --version")
+            print("✅ pip instalado correctamente.")
+            return
         except subprocess.CalledProcessError:
-            print("⚠️ Error al usar ensurepip. Intentando instalación manual de pip...")
-            run(f"{venv_path}/bin/python -m pip install --upgrade pip")  # Instalación manual
+            if attempt < max_attempts:
+                print("⚠️ Falló la instalación de pip. Reintentando...")
+                time.sleep(2)
+            else:
+                print("❌ No se pudo instalar pip después de varios intentos.")
+                sys.exit(1)
 
 def main():
     print("🔧 Iniciando despliegue del proyecto Lucia...")
@@ -50,11 +92,12 @@ def main():
     check_and_install_venv()
 
     run("sudo mkdir -p /srv/python")
+    run(f"sudo chown {os.getlogin()}:{os.getlogin()} /srv/python")
 
     # 1. Eliminar versión anterior del proyecto si existe
     if PROJECT_PATH.exists():
         print(f"🗑️ Eliminando proyecto anterior en {PROJECT_PATH}...")
-        run(f"sudo rm -rf {PROJECT_PATH}")
+        run(f"rm -rf {PROJECT_PATH}")
 
     # 2. Clonar el repositorio desde GitHub
     print("📥 Clonando proyecto desde GitHub...")
@@ -62,10 +105,13 @@ def main():
 
     # 3. Crear entorno virtual e instalar dependencias
     print("🐍 Creando entorno virtual e instalando dependencias...")
-    run(f"python3 -m venv {PROJECT_PATH}/venv")
-    install_pip(PROJECT_PATH / "venv")  # Asegurarse de que pip esté instalado
-    run(f"{PROJECT_PATH}/venv/bin/pip install --upgrade pip")
-    run(f"{PROJECT_PATH}/venv/bin/pip install -r {PROJECT_PATH}/requirements.txt")
+    venv_path = PROJECT_PATH / "venv"
+    create_virtualenv(venv_path)
+    install_pip(venv_path)
+    
+    # Instalar dependencias
+    run(f"{venv_path}/bin/pip install --upgrade pip")
+    run(f"{venv_path}/bin/pip install -r {PROJECT_PATH}/requirements.txt")
 
     # 4. Crear servicio systemd para Gunicorn
     print("⚙️ Creando archivo de servicio systemd...")
@@ -89,7 +135,6 @@ WantedBy=multi-user.target
 
     # 5. Habilitar y reiniciar el servicio
     print("🔁 Activando servicio lucia...")
-    run("sudo systemctl daemon-reexec")
     run("sudo systemctl daemon-reload")
     run("sudo systemctl enable lucia")
     run("sudo systemctl restart lucia")
