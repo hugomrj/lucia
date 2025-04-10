@@ -62,29 +62,53 @@ def create_virtualenv(venv_path):
                 sys.exit(1)
 
 def install_pip(venv_path):
-    """Instalar pip en el entorno virtual con reintentos."""
+    """Instalar pip en el entorno virtual con múltiples estrategias."""
     pip_path = venv_path / "bin" / "pip"
-    python_path = venv_path / "bin" / "python"  # Esta es la línea corregida
+    python_path = venv_path / "bin" / "python"
     
-    max_attempts = 3
-    for attempt in range(1, max_attempts + 1):
+    # Estrategia 1: Verificar si pip ya existe
+    if pip_path.exists():
         try:
-            if not pip_path.exists():
-                print(f"Instalando pip (intento {attempt}/{max_attempts})...")
-                run(f"{python_path} -m ensurepip --upgrade")
-                run(f"{python_path} -m pip install --upgrade pip")
-            
-            # Verificar que pip funciona
             run(f"{pip_path} --version")
-            print("✅ pip instalado correctamente.")
+            print("✅ pip ya está instalado y funcionando.")
             return
         except subprocess.CalledProcessError:
-            if attempt < max_attempts:
-                print("⚠️ Falló la instalación de pip. Reintentando...")
-                time.sleep(2)
-            else:
-                print("❌ No se pudo instalar pip después de varios intentos.")
-                sys.exit(1)
+            print("⚠️ pip existe pero no funciona, reinstalando...")
+    
+    # Estrategia 2: Usar ensurepip
+    print("🔧 Intentando instalar pip con ensurepip...")
+    try:
+        run(f"{python_path} -m ensurepip --upgrade")
+        run(f"{python_path} -m pip install --upgrade pip")
+        run(f"{pip_path} --version")
+        print("✅ pip instalado correctamente con ensurepip.")
+        return
+    except subprocess.CalledProcessError:
+        print("⚠️ Falló ensurepip, probando alternativa...")
+    
+    # Estrategia 3: Instalación manual de pip
+    print("🔧 Intentando instalación manual de pip...")
+    try:
+        run(f"{python_path} -m pip install --upgrade pip")
+        run(f"{pip_path} --version")
+        print("✅ pip instalado manualmente.")
+        return
+    except subprocess.CalledProcessError:
+        print("❌ No se pudo instalar pip después de varios intentos.")
+        
+        # Solución radical: recrear el entorno virtual
+        print("🔄 Recreando entorno virtual...")
+        run(f"rm -rf {venv_path}")
+        run(f"python3 -m venv {venv_path}")
+        
+        # Intentar nuevamente con ensurepip
+        try:
+            run(f"{venv_path}/bin/python -m ensurepip --upgrade")
+            run(f"{venv_path}/bin/python -m pip install --upgrade pip")
+            print("✅ pip instalado después de recrear el entorno.")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Error crítico: No se pudo instalar pip. Detalles: {e}")
+            sys.exit(1)
 
 def main():
     print("🔧 Iniciando despliegue del proyecto Lucia...")
