@@ -37,29 +37,59 @@ def check_and_install_venv():
         run("sudo apt update")
         run("sudo apt install -y python3-venv")
 
+
+
+
 def create_virtualenv(venv_path):
-    """Crea un entorno virtual con reintentos si falla."""
-    max_attempts = 3
-    for attempt in range(1, max_attempts + 1):
-        print(f"Intentando crear entorno virtual (intento {attempt}/{max_attempts})...")
-        try:
-            run(f"python3 -m venv {venv_path}")
-            # Verificar que se crearon los archivos esenciales
-            if (venv_path / "bin" / "python").exists():
-                print("✅ Entorno virtual creado correctamente.")
-                return
-            else:
-                print("⚠️ El entorno virtual no se creó completamente.")
-                raise subprocess.CalledProcessError(1, "venv")
-        except subprocess.CalledProcessError:
-            if attempt < max_attempts:
-                print("⚠️ Falló la creación del entorno virtual. Reintentando...")
-                time.sleep(2)
-                # Eliminar el directorio si existe para un intento limpio
-                run(f"rm -rf {venv_path}")
-            else:
-                print("❌ No se pudo crear el entorno virtual después de varios intentos.")
-                sys.exit(1)
+    """Versión mejorada para Python 3.12+"""
+    print("🐍 Creando entorno virtual con pip...")
+    
+    # 1. Limpieza previa
+    if venv_path.exists():
+        print("🧹 Eliminando entorno virtual existente...")
+        run(f"rm -rf {venv_path}")
+    
+    # 2. Intento principal con las mejores opciones para 3.12
+    try:
+        print("🔄 Intentando con --upgrade-deps y --clear...")
+        run(f"python3.12 -m venv --clear --upgrade-deps {venv_path}")
+        
+        # Verificación robusta
+        pip_path = venv_path / "bin" / "pip"
+        if not pip_path.exists():
+            raise subprocess.CalledProcessError(1, "venv")
+            
+        run(f"{pip_path} --version")
+        print("✅ Entorno creado con pip (método optimizado)")
+        return
+        
+    except subprocess.CalledProcessError:
+        print("⚠️ Método optimizado falló, probando alternativa...")
+    
+    # 3. Fallback tradicional con verificación extra
+    try:
+        run(f"python3.12 -m venv {venv_path}")
+        
+        # Verificar que python funciona en el venv
+        run(f"{venv_path}/bin/python --version")
+        
+        # Instalación forzada de pip
+        run(f"{venv_path}/bin/python -m ensurepip --upgrade")
+        run(f"{venv_path}/bin/python -m pip install --upgrade pip")
+        
+        # Verificación final
+        run(f"{venv_path}/bin/pip --version")
+        print("✅ Entorno creado (método tradicional)")
+        
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error crítico: {str(e)}")
+        print("💡 Posibles soluciones:")
+        print("1. Verifica que python3.12-venv esté instalado")
+        print("2. Prueba con: sudo apt install --reinstall python3.12-venv")
+        print("3. Revisa permisos en: /srv/python/lucia")
+        sys.exit(1)
+
+
 
 def install_pip(venv_path):
     """Instalar pip en el entorno virtual con múltiples estrategias."""
