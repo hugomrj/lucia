@@ -8,6 +8,8 @@ export SERVER_NAME="IP"
 '''
 
 
+
+
 # Ruta donde se instalará el proyecto
 PROJECT_PATH = Path("/srv/python/lucia")
 
@@ -23,6 +25,8 @@ def run(cmd, **kwargs):
 
 def main():
     print("🔧 Iniciando despliegue del proyecto Lucia...")
+
+    run("sudo mkdir -p /srv/python")
 
     # 1. Eliminar versión anterior del proyecto si existe
     if PROJECT_PATH.exists():
