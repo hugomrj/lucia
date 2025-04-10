@@ -140,13 +140,25 @@ def install_pip(venv_path):
             print(f"❌ Error crítico: No se pudo instalar pip. Detalles: {e}")
             sys.exit(1)
 
+
+
+
 def main():
     print("🔧 Iniciando despliegue del proyecto Lucia...")
+    
+    # Definir usuario una sola vez de manera robusta
+    try:
+        deploy_user = os.environ.get('SUDO_USER') or os.getlogin()
+    except Exception:
+        deploy_user = 'ubuntu'  # Fallback seguro
+
+
 
     check_and_install_venv()
 
     run("sudo mkdir -p /srv/python")
-    run(f"sudo chown {os.getlogin()}:{os.getlogin()} /srv/python")
+    # run(f"sudo chown {os.getlogin()}:{os.getlogin()} /srv/python")
+    run(f"sudo chown {deploy_user}:{deploy_user} /srv/python")
 
     # 1. Eliminar versión anterior del proyecto si existe
     if PROJECT_PATH.exists():
@@ -169,20 +181,33 @@ def main():
 
     # 4. Crear servicio systemd para Gunicorn
     print("⚙️ Creando archivo de servicio systemd...")
+    
     lucia_service = f"""[Unit]
 Description=Gunicorn instance to serve Lucia
 After=network.target
 
 [Service]
-User=ubuntu
+User={deploy_user}  # Usamos la variable recién definida
 Group=www-data
 WorkingDirectory={PROJECT_PATH}
 Environment="PATH={PROJECT_PATH}/venv/bin"
-ExecStart={PROJECT_PATH}/venv/bin/gunicorn --workers 3 --bind unix:{PROJECT_PATH}/lucia.sock wsgi:app
+Environment="PYTHONPATH={PROJECT_PATH}"
+ExecStart={PROJECT_PATH}/venv/bin/gunicorn \
+        --workers 1 \
+        --timeout 300 \
+        --bind unix:{PROJECT_PATH}/lucia.sock \
+        --access-logfile {PROJECT_PATH}/logs/access.log \
+        --error-logfile {PROJECT_PATH}/logs/error.log \
+        --log-level debug \
+        wsgi:app
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
 """
+
+
     with open("/tmp/lucia.service", "w") as f:
         f.write(lucia_service)
     run("sudo mv /tmp/lucia.service /etc/systemd/system/lucia.service")
@@ -214,5 +239,33 @@ WantedBy=multi-user.target
 
     print("\n✅ Despliegue finalizado correctamente.")
 
+
+
+    # 🔄 Añade esta sección JUSTO ANTES del if __name__ == '__main__':
+    print("🔧 Configurando permisos finales...")
+    
+    # 1. Asegurar permisos del proyecto
+    run(f"sudo chown -R {os.getlogin()}:www-data {PROJECT_PATH}")
+    run(f"sudo chmod -R 775 {PROJECT_PATH}")
+    
+    # 2. Crear directorio de logs
+    run(f"mkdir -p {PROJECT_PATH}/logs")
+    run(f"sudo chown {os.getlogin()}:www-data {PROJECT_PATH}/logs")
+    run(f"sudo chmod 775 {PROJECT_PATH}/logs")
+    
+    # 3. Reiniciar servicios para aplicar cambios
+    print("🔄 Reiniciando servicios...")
+    run("sudo systemctl daemon-reload")
+    run("sudo systemctl restart lucia")
+    run("sudo systemctl restart nginx")
+    
+    # 4. Verificación final
+    print("\n🔍 Verificando estado del servicio...")
+    run("sudo systemctl status lucia --no-pager")
+
+
+
 if __name__ == '__main__':
     main()
+
+    
