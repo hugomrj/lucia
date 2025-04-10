@@ -7,9 +7,6 @@ from pathlib import Path
 sudo SERVER_NAME="IP" python3 lucia/instalar_aplicacion.py
 '''
 
-
-
-
 # Ruta donde se instalará el proyecto
 PROJECT_PATH = Path("/srv/python/lucia")
 
@@ -23,7 +20,6 @@ def run(cmd, **kwargs):
     print(f"\n==> Ejecutando: {cmd}")
     subprocess.run(cmd, shell=True, check=True, **kwargs)
 
-
 def check_and_install_venv():
     """Verifica si python3-venv está instalado, y si no lo está, lo instala."""
     try:
@@ -34,15 +30,14 @@ def check_and_install_venv():
         run("sudo apt update")
         run("sudo apt install -y python3.12-venv")
 
-
 def install_pip(venv_path):
     """Instalar pip en el entorno virtual si no está presente."""
     pip_path = venv_path / "bin" / "pip"
     if not pip_path.exists():
         print("⚠️ pip no está presente en el entorno virtual. Instalando...")
+        # Usar ensurepip para instalar pip
         run(f"{venv_path}/bin/python -m ensurepip --upgrade")
-
-
+        run(f"{venv_path}/bin/pip install --upgrade pip")
 
 def main():
     print("🔧 Iniciando despliegue del proyecto Lucia...")
@@ -60,14 +55,12 @@ def main():
     print("📥 Clonando proyecto desde GitHub...")
     run("cd /srv/python && git clone https://github.com/hugomrj/lucia.git")
 
-
     # 3. Crear entorno virtual e instalar dependencias
     print("🐍 Creando entorno virtual e instalando dependencias...")
     run(f"python3 -m venv {PROJECT_PATH}/venv")
     install_pip(PROJECT_PATH / "venv")  # Asegurarse de que pip esté instalado
     run(f"{PROJECT_PATH}/venv/bin/pip install --upgrade pip")
     run(f"{PROJECT_PATH}/venv/bin/pip install -r {PROJECT_PATH}/requirements.txt")
-
 
     # 4. Crear servicio systemd para Gunicorn
     print("⚙️ Creando archivo de servicio systemd...")
