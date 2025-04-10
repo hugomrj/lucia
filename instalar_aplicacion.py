@@ -64,7 +64,7 @@ def create_virtualenv(venv_path):
 def install_pip(venv_path):
     """Instalar pip en el entorno virtual con reintentos."""
     pip_path = venv_path / "bin" / "pip"
-    python_path = venv_path / "bin" / "python
+    python_path = venv_path / "bin" / "python"  # Esta es la línea corregida
     
     max_attempts = 3
     for attempt in range(1, max_attempts + 1):
