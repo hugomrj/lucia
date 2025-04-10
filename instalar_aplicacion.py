@@ -187,7 +187,7 @@ After=network.target
 User={deploy_user}
 Group=www-data
 WorkingDirectory={PROJECT_PATH}
-Environment="PATH={PROJECT_PATH}/venv/bin"
+Environment="PATH=/usr/bin:/bin:/usr/local/bin:{PROJECT_PATH}/venv/bin"
 Environment="PYTHONPATH={PROJECT_PATH}"
 Environment="HOME=/home/{deploy_user}"  # Importante para permisos
 ExecStart={PROJECT_PATH}/venv/bin/gunicorn \
@@ -265,3 +265,5 @@ if __name__ == '__main__':
     main()
 
     
+
+
