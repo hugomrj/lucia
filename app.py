@@ -21,6 +21,74 @@ db_config = {
 
 
 
+@app.route('/api/historial', methods=['POST'])
+def agregar_registro():
+    """
+    Endpoint único para agregar registros al historial_chat.
+    Acepta:
+    - Solo pregunta
+    - Solo respuesta (actualiza la última pregunta sin responder)
+    - Ambos campos (inserta registro completo)
+    """
+    # Validar que llegó JSON
+    if not request.is_json:
+        return jsonify({"error": "Se requiere JSON"}), 400
+    
+    data = request.get_json()
+    
+    # Validar campos mínimos
+    if 'celular' not in data:
+        return jsonify({"error": "El campo 'celular' es obligatorio"}), 400
+    
+    celular = data['celular']
+    pregunta = data.get('pregunta')
+    respuesta = data.get('respuesta')
+
+    # Conexión a la base de datos
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        if pregunta and respuesta:
+            # Caso 1: Insertar registro completo
+            cursor.execute("""
+                INSERT INTO historial_chat (celular, pregunta, respuesta)
+                VALUES (%s, %s, %s)
+            """, (celular, pregunta, respuesta))
+            
+        elif pregunta:
+            # Caso 2: Insertar solo pregunta
+            cursor.execute("""
+                INSERT INTO historial_chat (celular, pregunta)
+                VALUES (%s, %s)
+            """, (celular, pregunta))
+            
+        elif respuesta:
+            # Caso 3: Actualizar última pregunta sin respuesta
+            cursor.execute("""
+                UPDATE historial_chat 
+                SET respuesta = %s
+                WHERE celular = %s 
+                AND respuesta IS NULL
+                ORDER BY fecha_registro DESC 
+                LIMIT 1
+            """, (respuesta, celular))
+            
+        else:
+            return jsonify({"error": "Se requiere 'pregunta' o 'respuesta'"}), 400
+        
+        conn.commit()
+        return jsonify({"message": "Registro guardado exitosamente"}), 201
+        
+    except mysql.connector.Error as err:
+        return jsonify({"error": f"Error de base de datos: {err}"}), 500
+    finally:
+        if 'conn' in locals() and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+
 
 def obtener_trabajador_por_celular(celular):
     """Obtiene los datos del trabajador por número de celular."""
