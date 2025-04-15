@@ -22,6 +22,66 @@ db_config = {
 
 
 
+from flask import Response
+
+@app.route('/api/conversaciones/obtener/<int:limit>/<string:celular>', methods=['GET'])
+def obtener_conversaciones(limit, celular):
+    """
+    Endpoint que devuelve conversaciones filtradas por celular en formato texto plano simplificado.
+    
+    Parámetros en path:
+    - limit (int): cantidad máxima de registros
+    - celular (str): número de teléfono a filtrar
+    
+    Formato de salida:
+    - "Pregunta..."
+      Respuesta: "Respuesta..."
+    """
+    try:
+        # Validar parámetros
+        if limit <= 0:
+            return Response("El límite debe ser mayor a 0", status=400, mimetype='text/plain')
+        
+        if not celular.isdigit() or len(celular) < 8:
+            return Response("Formato de celular inválido", status=400, mimetype='text/plain')
+        
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        
+        # Consulta con parámetros
+        cursor.execute("""
+            SELECT pregunta, respuesta
+            FROM historial_chat
+            WHERE celular = %s
+            ORDER BY fecha_registro DESC
+            LIMIT %s
+        """, (celular, limit))
+        
+        registros = cursor.fetchall()
+        
+        if not registros:
+            return Response(f"No existen conversacines anteriores.", mimetype='text/plain')
+        
+        # Formatear respuesta en el nuevo estilo
+        respuesta_texto = ""
+        for registro in registros:
+            respuesta_texto += (
+                f'- "{registro["pregunta"]}"\n'
+                f'  Respuesta: "{registro["respuesta"]}"\n\n'
+            )
+        
+        return Response(respuesta_texto.strip(), mimetype='text/plain')
+        
+    except mysql.connector.Error as err:
+        return Response(f"Error de base de datos: {err}", status=500, mimetype='text/plain')
+    except Exception as err:
+        return Response(f"Error inesperado: {err}", status=500, mimetype='text/plain')
+    finally:
+        if 'conn' in locals() and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
 
 
 @app.route('/api/conversaciones/registro', methods=['POST'])
