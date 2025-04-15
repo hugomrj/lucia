@@ -9,7 +9,6 @@ charset-normalizer==3.4.1
 click==8.1.8
 cryptography==44.0.2
 defusedxml==0.7.1
-endesive==1.4.1
 Flask==3.1.0
 fonttools==4.57.0
 gunicorn==23.0.0
@@ -32,7 +31,6 @@ pyhanko-certvalidator==0.26.8
 PyKCS11==1.5.17
 PyMuPDF==1.25.5
 PyNaCl==1.5.0
-pyOpenSSL==23.2.0
 PyPDF2==3.0.1
 pytz==2025.2
 PyYAML==6.0.2
