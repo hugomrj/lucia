@@ -21,14 +21,26 @@ db_config = {
 
 
 
-@app.route('/api/historial', methods=['POST'])
-def agregar_registro():
+
+
+
+@app.route('/api/conversaciones/registro', methods=['POST'])
+def registrar_conversacion():
     """
-    Endpoint único para agregar registros al historial_chat.
-    Acepta:
-    - Solo pregunta
-    - Solo respuesta (actualiza la última pregunta sin responder)
-    - Ambos campos (inserta registro completo)
+    Endpoint para registrar conversaciones completas (pregunta y respuesta)
+    en el historial de chat.
+    
+    Requiere:
+    - celular (string): Número de teléfono
+    - pregunta (string): Texto de la pregunta del usuario
+    - respuesta (string): Texto de la respuesta del sistema
+    
+    Ejemplo de JSON:
+    {
+      "celular": "59112345678",
+      "pregunta": "¿Aceptan tarjeta?",
+      "respuesta": "Sí, aceptamos Visa"
+    }
     """
     # Validar que llegó JSON
     if not request.is_json:
@@ -36,49 +48,32 @@ def agregar_registro():
     
     data = request.get_json()
     
-    # Validar campos mínimos
-    if 'celular' not in data:
-        return jsonify({"error": "El campo 'celular' es obligatorio"}), 400
+    # Validar campos obligatorios
+    campos_requeridos = ['celular', 'pregunta', 'respuesta']
+    for campo in campos_requeridos:
+        if campo not in data:
+            return jsonify({"error": f"El campo '{campo}' es obligatorio"}), 400
     
     celular = data['celular']
-    pregunta = data.get('pregunta')
-    respuesta = data.get('respuesta')
+    pregunta = data['pregunta']
+    respuesta = data['respuesta']
 
     # Conexión a la base de datos
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         
-        if pregunta and respuesta:
-            # Caso 1: Insertar registro completo
-            cursor.execute("""
-                INSERT INTO historial_chat (celular, pregunta, respuesta)
-                VALUES (%s, %s, %s)
-            """, (celular, pregunta, respuesta))
-            
-        elif pregunta:
-            # Caso 2: Insertar solo pregunta
-            cursor.execute("""
-                INSERT INTO historial_chat (celular, pregunta)
-                VALUES (%s, %s)
-            """, (celular, pregunta))
-            
-        elif respuesta:
-            # Caso 3: Actualizar última pregunta sin respuesta
-            cursor.execute("""
-                UPDATE historial_chat 
-                SET respuesta = %s
-                WHERE celular = %s 
-                AND respuesta IS NULL
-                ORDER BY fecha_registro DESC 
-                LIMIT 1
-            """, (respuesta, celular))
-            
-        else:
-            return jsonify({"error": "Se requiere 'pregunta' o 'respuesta'"}), 400
+        # Insertar registro completo
+        cursor.execute("""
+            INSERT INTO historial_chat (celular, pregunta, respuesta)
+            VALUES (%s, %s, %s)
+        """, (celular, pregunta, respuesta))
         
         conn.commit()
-        return jsonify({"message": "Registro guardado exitosamente"}), 201
+        return jsonify({
+            "message": "Conversación registrada exitosamente",
+            "id": cursor.lastrowid
+        }), 201
         
     except mysql.connector.Error as err:
         return jsonify({"error": f"Error de base de datos: {err}"}), 500
@@ -86,6 +81,10 @@ def agregar_registro():
         if 'conn' in locals() and conn.is_connected():
             cursor.close()
             conn.close()
+
+
+
+
 
 
 

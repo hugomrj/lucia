@@ -1,4 +1,4 @@
-#!/home/hugo/python/lucia/venv/bin/python3
+#!/home/hugo/Documentos/python/lucia/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
